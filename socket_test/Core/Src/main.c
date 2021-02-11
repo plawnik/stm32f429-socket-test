@@ -317,8 +317,6 @@ static void http_server_netconn_serve(struct netconn *conn) {
 	netbuf_delete(inbuf);
 }
 
-
-
 /* USER CODE END 4 */
 
 /* USER CODE BEGIN Header_StartDefaultTask */
@@ -339,33 +337,36 @@ void StartDefaultTask(void *argument) {
 		osDelay(100);
 	httpd_init();
 
-	// sewer http
-	struct netconn *conn, *newconn;
-	err_t err;
+	while (1) {
+		osDelay(50);
 
-	/* Create a new TCP connection handle */
-	conn = netconn_new(NETCONN_TCP);
-	LWIP_ERROR("http_server: invalid conn", (conn != NULL), return;);
+		// raw sewer http, only for debug test
+		struct netconn *conn, *newconn;
+		err_t err;
 
-	/* Bind to port 80 (HTTP) with default IP address */
-	netconn_bind(conn, NULL, 443);
+		// Create a new TCP connection handle
+		conn = netconn_new(NETCONN_TCP);
+		LWIP_ERROR("http_server: invalid conn", (conn != NULL), return;);
 
-	/* Put the connection into LISTEN state */
-	netconn_listen(conn);
+		// Bind to port 80 (HTTP) with default IP address
+		netconn_bind(conn, NULL, 443);
 
+		// Put the connection into LISTEN state
+		netconn_listen(conn);
+		do {
 
-	do {
+			err = netconn_accept(conn, &newconn);
+			if (err == ERR_OK) {
+				http_server_netconn_serve(newconn);
+				netconn_delete(newconn);
+			}
+		} while (err == ERR_OK);LWIP_DEBUGF(HTTPD_DEBUG,
+				("http_server_netconn_thread: netconn_accept received error %d, shutting down",
+						err));
+		netconn_close(conn);
+		netconn_delete(conn);
 
-		err = netconn_accept(conn, &newconn);
-		if (err == ERR_OK) {
-			http_server_netconn_serve(newconn);
-			netconn_delete(newconn);
-		}
-	} while (err == ERR_OK);LWIP_DEBUGF(HTTPD_DEBUG,
-			("http_server_netconn_thread: netconn_accept received error %d, shutting down",
-					err));
-	netconn_close(conn);
-	netconn_delete(conn);
+	}
 	/* USER CODE END 5 */
 }
 

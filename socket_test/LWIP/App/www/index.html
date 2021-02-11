@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>STM32 Dynamic chart example</title>
+  <script src="scripts/chart.js"></script>
+</head>
+<style>
+  div {
+     width: 100px;
+     height:100px;
+     margin: 0px auto;
+   }
+</style>
+
+<body>
+	 <header>
+    <h1 style="text-align:center">STM32 live update chart</h1>
+  </header>
+  <div style="width:30% ">
+    <canvas id="canvas" height="450" width="600" ></canvas>
+  </div>
+
+  <script>
+  var getRandomDataArray = function () {
+    var dataArray = [];
+    for (var i = 0; i < 7; i++) dataArray.push(Math.round(Math.random() * 100));
+    return dataArray;
+  }
+
+  var chartData = {
+    labels : ["-6 minut","-5 minut","-4 minuty","-3 minuty","-2 minuty","-1 minuta","Teraz"],
+    datasets : [
+      {
+        label: "My Second dataset",
+        fillColor : "rgba(151,187,205,0.2)",
+        strokeColor : "rgba(151,187,205,1)",
+        pointColor : "rgba(151,187,205,1)",
+        pointStrokeColor : "#fff",
+        pointHighlightFill : "#fff",
+        pointHighlightStroke : "rgba(151,187,205,1)",
+        data : getRandomDataArray()
+      }
+    ]
+  }
+
+  window.onload = function(){
+    var chartOptions = { responsive : true };
+    var chart = document.getElementById("canvas").getContext("2d");
+    window.myBar = new Chart(chart).Line(chartData, chartOptions);
+  }
+  </script>
+</body>
+</html>
