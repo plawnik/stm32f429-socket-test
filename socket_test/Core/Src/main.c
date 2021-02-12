@@ -53,7 +53,7 @@ UART_HandleTypeDef huart3;
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = { .name = "defaultTask",
-		.priority = (osPriority_t) osPriorityNormal, .stack_size = 1024 * 4 };
+		.priority = (osPriority_t) osPriorityNormal, .stack_size = 512 * 4 };
 /* USER CODE BEGIN PV */
 extern struct netif gnetif;
 /* USER CODE END PV */
@@ -132,6 +132,10 @@ int main(void) {
 	/* USER CODE BEGIN RTOS_THREADS */
 	/* add threads, ... */
 	/* USER CODE END RTOS_THREADS */
+
+	/* USER CODE BEGIN RTOS_EVENTS */
+	/* add events, ... */
+	/* USER CODE END RTOS_EVENTS */
 
 	/* Start scheduler */
 	osKernelStart();
@@ -305,7 +309,7 @@ static void http_server_netconn_serve(struct netconn *conn) {
 					NETCONN_NOCOPY);
 
 			/* Send our HTML page */
-			netconn_write(conn, task_desc_buf, sizeof(task_desc_buf) - 1,
+			netconn_write(conn, http_index_html, sizeof(http_index_html) - 1,
 					NETCONN_NOCOPY);
 		}
 	}
@@ -316,6 +320,8 @@ static void http_server_netconn_serve(struct netconn *conn) {
 	 so we have to make sure to deallocate the buffer) */
 	netbuf_delete(inbuf);
 }
+
+
 
 /* USER CODE END 4 */
 
@@ -330,6 +336,8 @@ void StartDefaultTask(void *argument) {
 	/* init code for LWIP */
 	MX_LWIP_Init();
 	/* USER CODE BEGIN 5 */
+
+
 
 	UartTaskInit(&huart3);
 	StartDhcpTask();
@@ -354,7 +362,6 @@ void StartDefaultTask(void *argument) {
 		// Put the connection into LISTEN state
 		netconn_listen(conn);
 		do {
-
 			err = netconn_accept(conn, &newconn);
 			if (err == ERR_OK) {
 				http_server_netconn_serve(newconn);

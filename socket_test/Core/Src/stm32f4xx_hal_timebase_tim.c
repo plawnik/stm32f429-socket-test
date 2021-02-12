@@ -58,9 +58,8 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
 
   /* Compute TIM10 clock */
   uwTimclock = 2*HAL_RCC_GetPCLK2Freq();
-
   /* Compute the prescaler value to have TIM10 counter clock equal to 1MHz */
-  uwPrescalerValue = (uint32_t) ((uwTimclock / 1000000) - 1);
+  uwPrescalerValue = (uint32_t) ((uwTimclock / 1000000U) - 1U);
 
   /* Initialize TIM10 */
   htim10.Instance = TIM10;
@@ -71,7 +70,7 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
   + ClockDivision = 0
   + Counter direction = Up
   */
-  htim10.Init.Period = (1000000 / 1000) - 1;
+  htim10.Init.Period = (1000000U / 1000U) - 1U;
   htim10.Init.Prescaler = uwPrescalerValue;
   htim10.Init.ClockDivision = 0;
   htim10.Init.CounterMode = TIM_COUNTERMODE_UP;

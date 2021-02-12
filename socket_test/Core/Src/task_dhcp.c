@@ -18,9 +18,20 @@ __IO uint8_t DHCP_state;
 
 extern struct netif gnetif;
 
+extern unsigned char data__data_json[];
+
 osThreadId_t dhcpTaskHandle;
 const osThreadAttr_t dhcpTask_attributes = { .name = "dhcpTask", .priority =
 		(osPriority_t) osPriorityNormal, .stack_size = 1024 * 4 };
+
+
+int getRandom(int lower, int upper)
+{
+	int num = (rand() % (upper - lower + 1)) + lower;
+	return num;
+}
+
+
 
 void Dhcp_thread(void *argument);
 void Dhcp_process(void const *argument);
@@ -35,6 +46,10 @@ void Dhcp_thread(void *argument) {
 
 	}
 }
+
+
+
+
 
 void Dhcp_process(void const *argument) {
 	struct netif *netif = (struct netif*) argument;
@@ -102,6 +117,12 @@ void Dhcp_process(void const *argument) {
 		}
 		/* wait 250 ms */
 		osDelay(250);
+		// feed json with random data
+		for(int i =0;i<7;i++){
+			int idx = 11+17+63+28+1;
+			data__data_json[idx+2*i]=getRandom(0,9)+'0';
+		}
+
 	}
 }
 

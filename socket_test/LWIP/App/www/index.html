@@ -3,7 +3,20 @@
 
 <head>
   <title>STM32 Dynamic chart example</title>
-  <script src="scripts/chart.js"></script>
+  <script src="scripts/chart.js"></script>    
+  <meta name="viewport" content="width=device-width" />
+	<script type="text/javascript" 
+            src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js">
+    </script>
+	<script>
+	$(document).ready(function(){
+ 	 $("button").click(function(){
+    	$.get("data.json", function(data, status){
+   	   alert("Data: " + data + "\nStatus: " + status);
+   	 });
+ 	 });
+	});
+</script>
 </head>
 <style>
   div {
@@ -19,6 +32,7 @@
   </header>
   <div style="width:30% ">
     <canvas id="canvas" height="450" width="600" ></canvas>
+    	<button>Send an HTTP GET request to a page and get the result back</button>
   </div>
 
   <script>
